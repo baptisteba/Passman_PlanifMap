@@ -29,18 +29,25 @@ Passman Planificator est une application web progressive qui permet à l'entrepr
    - Marqueurs interactifs avec info-bulles au survol
    - Clearing automatique des sélections précédentes
    - Marquage visuel distinct pour les interventions et sous-traitants
-2. **Liste des interventions** : Affichage des interventions à planifier
-3. **Recherche de proximité** : Calcul des 5 sous-traitants les plus proches d'une intervention
-4. **Gestion des sous-traitants** : 
+   - Affichage des contacts séparés (téléphone et email) dans les popups
+2. **Interface moderne** : Design épuré avec la couleur principale #162272
+   - Animations et transitions fluides
+   - Cartes avec effets d'élévation et de survol
+   - Navigation intuitive et cohérente
+   - Feedback visuel pour toutes les interactions
+3. **Liste des interventions** : Affichage des interventions à planifier
+4. **Recherche de proximité** : Calcul des 5 sous-traitants les plus proches d'une intervention
+5. **Gestion des sous-traitants** : 
    - Ajout de nouveaux sous-traitants via adresse postale
+   - Champs séparés pour téléphone et email
    - Édition et suppression des sous-traitants existants
    - Affichage des coordonnées GPS pour référence
    - Conversion automatique des adresses en coordonnées géographiques
-5. **Saisie d'adresses intelligente** :
+6. **Saisie d'adresses intelligente** :
    - Suggestions d'adresses après 1.5 secondes d'inactivité
    - Conversion automatique en coordonnées GPS
    - Interface utilisateur intuitive avec retour visuel
-6. **Support PWA** : Fonctionnalité hors ligne et installation sur les appareils
+7. **Support PWA** : Fonctionnalité hors ligne et installation sur les appareils
 
 ## Installation
 
@@ -99,12 +106,13 @@ passman-planificator/
 L'application utilise une architecture basée sur des composants Vue.js 3 avec la Composition API et TypeScript pour un développement typé. La gestion d'état est assurée par Pinia, qui permet de stocker et de manipuler :
 
 - La liste des interventions à planifier
-- Les données des sous-traitants (nom, type, contact, adresse, coordonnées)
+- Les données des sous-traitants (nom, type, téléphone, email, adresse, coordonnées)
 - L'intervention sélectionnée
 - Les calculs de proximité entre interventions et sous-traitants
 
 La cartographie est gérée par Leaflet via une implémentation personnalisée qui permet d'afficher :
 - Des marqueurs bleus pour les sous-traitants avec info-bulles au survol
+- Popups détaillées avec contacts séparés (téléphone et email)
 - Un marqueur rouge proéminent pour l'intervention sélectionnée
 - Des contrôles de zoom personnalisés pour une meilleure expérience utilisateur
 
@@ -125,32 +133,39 @@ Le support PWA permet l'utilisation hors ligne grâce au cache des tuiles OpenSt
 2. Cliquez sur une intervention pour l'afficher sur la carte
 3. Les 5 sous-traitants les plus proches s'affichent automatiquement
 4. Survolez un marqueur de sous-traitant pour voir ses informations détaillées
-5. Accédez aux paramètres en cliquant sur l'icône d'engrenage pour gérer les sous-traitants
+5. Accédez aux paramètres en cliquant sur "Paramètres" dans la barre supérieure
 6. Ajoutez ou modifiez des sous-traitants en utilisant l'adresse postale (conversion automatique en coordonnées)
 7. Supprimez des sous-traitants que vous ne souhaitez plus suivre
 
 ## Améliorations récentes
 
+- **Interface utilisateur moderne**
+  - Nouvelle couleur principale #162272 pour une identité visuelle professionnelle
+  - Redesign complet avec des cartes et des composants modernes
+  - Animations et transitions améliorées pour une meilleure expérience
+  - Modales et dialogs entièrement repensés avec une apparence cohérente
+
 - **Carte interactive améliorée**
-  - Ajout de contrôles de zoom personnalisés
+  - Popups améliorées avec séparation téléphone/email
+  - Icônes dédiées pour chaque type de contact
   - Affichage d'info-bulles au survol des marqueurs de sous-traitants
   - Fermeture automatique des pop-ups précédents lors de nouvelles sélections
-  - Amélioration visuelle des marqueurs d'intervention
 
 - **Gestion avancée des sous-traitants**
-  - Ajout des fonctionnalités d'édition et de suppression
-  - Support pour les champs type et contact
-  - Interface de gestion repensée pour une meilleure expérience utilisateur
+  - Séparation des champs téléphone et email pour une meilleure organisation
+  - Interface de gestion complètement redesignée
+  - Listes et tableaux améliorés avec indicateurs visuels
+  - Modales d'information et de confirmation modernisées
 
 - **Géocodage d'adresses**
-  - Ajout d'un composant de saisie d'adresse avec suggestions
-  - Conversion automatique des adresses en coordonnées GPS
   - Suggestions d'adresses apparaissant après 1.5 secondes d'inactivité
+  - Meilleure intégration visuelle du composant d'autocomplétion
+  - Détection intelligente du type de contact (email vs téléphone)
 
 - **Expérience utilisateur**
-  - Amélioration de la réactivité de l'interface
-  - Ajout d'indicateurs visuels pour les actions en cours
-  - Navigation simplifiée entre les différentes fonctionnalités
+  - Navigation simplifiée avec labels et icônes explicites
+  - Feedback visuel pour toutes les actions (chargement, succès, erreur)
+  - Adaptations responsives améliorées pour tous les appareils
 
 ## Licence
 
