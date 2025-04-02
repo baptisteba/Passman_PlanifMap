@@ -46,7 +46,7 @@ const vuetify = createVuetify({
     themes: {
       light: {
         colors: {
-          primary: '#1976D2',   // Blue
+          primary: '#162272',   // Deep blue
           secondary: '#424242', // Dark gray
           accent: '#FF4081',    // Pink
           info: '#2196F3',      // Light blue

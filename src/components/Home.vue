@@ -10,6 +10,11 @@
 
     <!-- Interventions list section -->
     <div class="interventions-container">
+      <v-sheet class="px-2 py-2 d-flex align-center">
+        <v-icon icon="mdi-clipboard-list" class="mr-2" color="primary"></v-icon>
+        <span class="text-h6 font-weight-medium">Interventions</span>
+      </v-sheet>
+      
       <InterventionList 
         @select-intervention="onSelectIntervention"
       />
@@ -66,8 +71,8 @@ const onSelectIntervention = (id: string) => {
   height: 100%; /* Use full height of parent container */
   width: 100%;
   overflow: hidden;
-  position: relative; /* Change from absolute to relative */
-  /* Remove top, left, right, bottom positioning since we're in v-main which already accounts for the app bar */
+  position: relative;
+  background-color: #f8f9fa;
 }
 
 .map-container {
@@ -75,7 +80,10 @@ const onSelectIntervention = (id: string) => {
   height: 100%;
   width: 70%;
   position: relative;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 .interventions-container {
@@ -87,18 +95,40 @@ const onSelectIntervention = (id: string) => {
   width: 30%;
   position: relative;
   background-color: white;
-  box-shadow: -1px 0 3px rgba(0, 0, 0, 0.1);
+  box-shadow: -2px 0 15px rgba(0, 0, 0, 0.06);
+  border-radius: 16px 0 0 16px;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.interventions-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.interventions-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+.interventions-container::-webkit-scrollbar-thumb {
+  background: rgba(22, 34, 114, 0.2);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.interventions-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(22, 34, 114, 0.3);
 }
 
 /* Slide up animation for the nearest subcontractors panel */
 .slide-up-enter-active, 
 .slide-up-leave-active {
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .slide-up-enter-from, 
 .slide-up-leave-to {
-  transform: translateY(20px);
+  transform: translateY(30px);
   opacity: 0;
 }
 
@@ -115,11 +145,14 @@ const onSelectIntervention = (id: string) => {
   
   .map-container {
     height: 50%;
+    border-radius: 0;
   }
   
   .interventions-container {
     height: 50%;
-    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 -8px 15px rgba(0, 0, 0, 0.08);
+    border-radius: 16px 16px 0 0;
+    z-index: 2;
   }
 }
 </style> 

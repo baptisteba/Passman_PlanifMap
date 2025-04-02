@@ -125,7 +125,10 @@ function addSubcontractorMarkers() {
       <div class="intervention-popup">
         <h3>${subcontractor.name || 'Unnamed Subcontractor'}</h3>
         <p><strong>Type:</strong> ${subcontractor.type || 'Not specified'}</p>
-        <p><strong>Contact:</strong> ${subcontractor.contact || 'Not available'}</p>
+        ${subcontractor.phone ? `<p class="contact-item"><i class="icon-phone"></i> ${subcontractor.phone}</p>` : ''}
+        ${subcontractor.email ? `<p class="contact-item"><i class="icon-email"></i> ${subcontractor.email}</p>` : ''}
+        ${(!subcontractor.phone && !subcontractor.email && subcontractor.contact) ? 
+          `<p class="contact-item"><i class="icon-contact"></i> ${subcontractor.contact}</p>` : ''}
       </div>
     `;
     
@@ -560,5 +563,151 @@ function closeAllPopups() {
 :deep(.leaflet-marker-icon:hover) {
   transform: translateY(-2px);
   filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+}
+</style>
+
+<style>
+/* Override the default Leaflet popup styles */
+.custom-popup {
+  min-width: 200px;
+  margin-bottom: 15px;
+  padding: 0;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15) !important;
+  border: none !important;
+  overflow: hidden;
+}
+
+/* Popup content styling */
+.custom-popup .leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.custom-popup .leaflet-popup-content {
+  margin: 0;
+  width: 100%;
+  padding: 0;
+}
+
+.custom-popup .leaflet-popup-tip {
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.custom-popup .leaflet-popup-close-button {
+  color: #777;
+  top: 5px;
+  right: 5px;
+  font-size: 16px;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: #f8f8f8;
+  z-index: 100;
+}
+
+.custom-popup .leaflet-popup-close-button:hover {
+  color: #333;
+  background-color: #eee;
+}
+
+/* Intervention popup styling */
+.intervention-popup {
+  min-width: 200px;
+  padding: 15px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.intervention-popup h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary-color, #162272);
+}
+
+.intervention-popup p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #444;
+}
+
+/* Contact items styling */
+.contact-item {
+  display: flex;
+  align-items: center;
+  margin: 6px 0;
+}
+
+.icon-phone, .icon-email, .icon-contact {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.icon-phone {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23162272'%3E%3Cpath d='M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z'/%3E%3C/svg%3E");
+}
+
+.icon-email {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23162272'%3E%3Cpath d='M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E");
+}
+
+.icon-contact {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23162272'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E");
+}
+
+/* Differentiate hover popups from click popups */
+.hover-popup {
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+}
+
+.hover-popup .leaflet-popup-content-wrapper {
+  background-color: #f8f8f8;
+}
+
+/* Custom zoom controls */
+.leaflet-control-zoom {
+  border: none !important;
+  margin-bottom: 20px !important;
+  margin-right: 20px !important;
+}
+
+.leaflet-control-zoom a {
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  background-color: white !important;
+  color: #333 !important;
+  border: none !important;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+  font-size: 18px !important;
+  transition: all 0.2s ease !important;
+  margin-bottom: 5px !important;
+  border-radius: 8px !important;
+}
+
+.leaflet-control-zoom a:first-child {
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px !important;
+}
+
+.leaflet-control-zoom a:last-child {
+  border-bottom-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background-color: #f8f8f8 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
 }
 </style> 

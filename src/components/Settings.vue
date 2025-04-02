@@ -1,121 +1,180 @@
 <template>
   <div class="settings-container">
-    <v-container>
+    <v-container fluid class="px-4 py-2">
+      <v-row>
+        <v-col cols="12" class="py-2">
+          <div class="d-flex align-center mb-6">
+            <v-btn
+              variant="text"
+              to="/"
+              class="back-link mr-3"
+              size="small"
+              color="primary"
+              density="compact"
+            >
+              <v-icon icon="mdi-arrow-left" size="small" class="mr-1"></v-icon>
+              Carte
+            </v-btn>
+            <h1 class="text-h4 font-weight-medium settings-title">Paramètres</h1>
+          </div>
+        </v-col>
+      </v-row>
+      
       <v-row>
         <v-col cols="12">
-          <v-card elevation="2" rounded="lg" class="settings-card">
-            <v-card-title class="d-flex align-center">
-              <v-icon icon="mdi-cog" class="mr-2"></v-icon>
-              <span class="text-h5">Paramètres</span>
-            </v-card-title>
-            <v-card-text>
-              <h3 class="text-h6 mb-4 d-flex align-center">
-                <v-icon icon="mdi-account-group" class="mr-2"></v-icon>
-                Gestion des sous-traitants
-              </h3>
+          <v-card elevation="0" rounded="xl" class="settings-card pa-0">
+            <v-card-item class="header-gradient">
+              <template v-slot:prepend>
+                <v-avatar color="white" variant="flat" rounded class="settings-avatar">
+                  <v-icon icon="mdi-account-group" color="primary"></v-icon>
+                </v-avatar>
+              </template>
               
+              <v-card-title class="text-white text-h5 font-weight-bold">
+                Gestion des sous-traitants
+              </v-card-title>
+              
+              <template v-slot:append>
+                <v-btn
+                  color="white"
+                  variant="flat"
+                  class="add-button"
+                  @click="openAddDialog"
+                  rounded="xl"
+                >
+                  <v-icon icon="mdi-plus" class="mr-1"></v-icon>
+                  Ajouter
+                </v-btn>
+              </template>
+            </v-card-item>
+            
+            <v-card-text class="pa-0 mt-0">
               <!-- List of existing subcontractors -->
               <v-table class="subcontractor-table">
                 <thead>
                   <tr>
                     <th>Nom</th>
                     <th>Type</th>
-                    <th>Contact</th>
+                    <th>Téléphone</th>
+                    <th>Email</th>
                     <th>Adresse</th>
-                    <th class="text-center">Actions</th>
+                    <th class="text-center actions-header">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="subcontractor in subcontractors" :key="subcontractor.id" class="subcontractor-row">
-                    <td>{{ subcontractor.name }}</td>
-                    <td>{{ subcontractor.type || 'Non spécifié' }}</td>
-                    <td>{{ subcontractor.contact || 'Non spécifié' }}</td>
-                    <td class="address-cell">{{ subcontractor.address || 'Non spécifiée' }}</td>
+                    <td class="font-weight-medium">{{ subcontractor.name }}</td>
+                    <td>
+                      <v-chip v-if="subcontractor.type" size="small" variant="flat" color="secondary" class="text-caption">
+                        {{ subcontractor.type }}
+                      </v-chip>
+                      <span v-else class="text-disabled">Non spécifié</span>
+                    </td>
+                    <td>
+                      <div v-if="subcontractor.phone" class="contact-info d-flex align-center">
+                        <v-icon icon="mdi-phone" size="x-small" class="mr-1"></v-icon>
+                        {{ subcontractor.phone }}
+                      </div>
+                      <span v-else class="text-disabled">Non spécifié</span>
+                    </td>
+                    <td>
+                      <div v-if="subcontractor.email" class="contact-info d-flex align-center">
+                        <v-icon icon="mdi-email" size="x-small" class="mr-1"></v-icon>
+                        {{ subcontractor.email }}
+                      </div>
+                      <span v-else class="text-disabled">Non spécifié</span>
+                    </td>
+                    <td class="address-cell">
+                      <div class="d-flex align-center">
+                        <v-icon icon="mdi-map-marker" size="x-small" color="primary" class="mr-1"></v-icon>
+                        <span class="address-text">{{ subcontractor.address || 'Non spécifiée' }}</span>
+                      </div>
+                    </td>
                     <td class="actions-cell">
-                      <v-tooltip text="Coordonnées GPS">
-                        <template v-slot:activator="{ props }">
-                          <v-btn
-                            icon
-                            density="comfortable"
-                            color="info"
-                            v-bind="props"
-                            @click="showCoordinates(subcontractor)"
-                          >
-                            <v-icon icon="mdi-map-marker"></v-icon>
-                          </v-btn>
-                        </template>
-                      </v-tooltip>
-                      
-                      <v-tooltip text="Modifier">
-                        <template v-slot:activator="{ props }">
-                          <v-btn
-                            icon
-                            density="comfortable"
-                            color="primary"
-                            v-bind="props"
-                            @click="editSubcontractor(subcontractor)"
-                          >
-                            <v-icon icon="mdi-pencil"></v-icon>
-                          </v-btn>
-                        </template>
-                      </v-tooltip>
-                      
-                      <v-tooltip text="Supprimer">
-                        <template v-slot:activator="{ props }">
-                          <v-btn
-                            icon
-                            density="comfortable"
-                            color="error"
-                            v-bind="props"
-                            @click="confirmDelete(subcontractor)"
-                          >
-                            <v-icon icon="mdi-delete"></v-icon>
-                          </v-btn>
-                        </template>
-                      </v-tooltip>
+                      <div class="action-buttons">
+                        <v-tooltip location="top" text="Coordonnées GPS">
+                          <template v-slot:activator="{ props }">
+                            <v-btn
+                              icon
+                              variant="text"
+                              density="comfortable"
+                              color="info"
+                              v-bind="props"
+                              @click="showCoordinates(subcontractor)"
+                            >
+                              <v-icon icon="mdi-map-marker"></v-icon>
+                            </v-btn>
+                          </template>
+                        </v-tooltip>
+                        
+                        <v-tooltip location="top" text="Modifier">
+                          <template v-slot:activator="{ props }">
+                            <v-btn
+                              icon
+                              variant="text"
+                              density="comfortable"
+                              color="primary"
+                              v-bind="props"
+                              @click="editSubcontractor(subcontractor)"
+                            >
+                              <v-icon icon="mdi-pencil"></v-icon>
+                            </v-btn>
+                          </template>
+                        </v-tooltip>
+                        
+                        <v-tooltip location="top" text="Supprimer">
+                          <template v-slot:activator="{ props }">
+                            <v-btn
+                              icon
+                              variant="text"
+                              density="comfortable"
+                              color="error"
+                              v-bind="props"
+                              @click="confirmDelete(subcontractor)"
+                            >
+                              <v-icon icon="mdi-delete"></v-icon>
+                            </v-btn>
+                          </template>
+                        </v-tooltip>
+                      </div>
                     </td>
                   </tr>
                 </tbody>
               </v-table>
               
-              <v-divider class="my-6"></v-divider>
-              
-              <!-- Button to open the dialog -->
-              <v-btn 
-                color="primary" 
-                class="add-button"
-                elevation="2"
-                @click="openAddDialog"
-              >
-                <v-icon icon="mdi-plus" class="mr-2"></v-icon>
-                Ajouter un sous-traitant
-              </v-btn>
+              <!-- Empty state -->
+              <div v-if="subcontractors.length === 0" class="empty-state pa-8 text-center">
+                <v-icon icon="mdi-account-group" size="64" color="grey-lighten-3" class="mb-4"></v-icon>
+                <h3 class="text-h6 mb-2">Aucun sous-traitant</h3>
+                <p class="text-body-2 text-grey mb-4">Ajoutez votre premier sous-traitant pour commencer</p>
+                <v-btn
+                  color="primary"
+                  variant="elevated"
+                  @click="openAddDialog"
+                  rounded="xl"
+                >
+                  <v-icon icon="mdi-plus" class="mr-1"></v-icon>
+                  Ajouter un sous-traitant
+                </v-btn>
+              </div>
             </v-card-text>
           </v-card>
-        </v-col>
-      </v-row>
-      
-      <v-row class="mt-6">
-        <v-col cols="12">
-          <v-btn 
-            color="secondary" 
-            elevation="1"
-            class="back-button"
-            @click="goBack"
-          >
-            <v-icon icon="mdi-arrow-left" class="mr-2"></v-icon>
-            Retour à la carte
-          </v-btn>
         </v-col>
       </v-row>
     </v-container>
     
     <!-- Dialog for adding/editing a subcontractor -->
     <v-dialog v-model="dialog" max-width="600px" class="subcontractor-dialog">
-      <v-card rounded="lg" elevation="4">
-        <v-card-title class="text-h5 pa-4 bg-primary text-white">
-          <span>{{ isEditing ? 'Modifier le sous-traitant' : 'Ajouter un nouveau sous-traitant' }}</span>
-        </v-card-title>
+      <v-card rounded="xl" elevation="8">
+        <v-toolbar color="primary" class="dialog-header" flat>
+          <v-toolbar-title class="text-white">
+            {{ isEditing ? 'Modifier le sous-traitant' : 'Ajouter un nouveau sous-traitant' }}
+          </v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="dialog = false" variant="text" color="white">
+            <v-icon icon="mdi-close"></v-icon>
+          </v-btn>
+        </v-toolbar>
         
         <v-card-text class="pa-4 pt-6">
           <v-form ref="form" v-model="valid" @submit.prevent="saveSubcontractor">
@@ -128,6 +187,7 @@
                     variant="outlined"
                     required
                     :rules="[v => !!v || 'Le nom est requis']"
+                    prepend-inner-icon="mdi-account"
                   ></v-text-field>
                 </v-col>
                 
@@ -138,15 +198,28 @@
                     variant="outlined"
                     :items="subcontractorTypes"
                     clearable
+                    prepend-inner-icon="mdi-tag"
                   ></v-select>
                 </v-col>
                 
-                <v-col cols="12">
+                <v-col cols="12" sm="6">
                   <v-text-field
-                    v-model="currentSubcontractor.contact"
-                    label="Contact (email ou téléphone)"
+                    v-model="currentSubcontractor.phone"
+                    label="Téléphone"
                     variant="outlined"
                     clearable
+                    prepend-inner-icon="mdi-phone"
+                  ></v-text-field>
+                </v-col>
+                
+                <v-col cols="12" sm="6">
+                  <v-text-field
+                    v-model="currentSubcontractor.email"
+                    label="Email"
+                    variant="outlined"
+                    clearable
+                    prepend-inner-icon="mdi-email"
+                    :rules="emailRules"
                   ></v-text-field>
                 </v-col>
                 
@@ -175,6 +248,7 @@
                     hint="Obtenue automatiquement à partir de l'adresse"
                     persistent-hint
                     :rules="latitudeRules"
+                    prepend-inner-icon="mdi-latitude"
                   ></v-text-field>
                 </v-col>
                 
@@ -190,6 +264,7 @@
                     hint="Obtenue automatiquement à partir de l'adresse"
                     persistent-hint
                     :rules="longitudeRules"
+                    prepend-inner-icon="mdi-longitude"
                   ></v-text-field>
                 </v-col>
                 
@@ -203,16 +278,24 @@
           </v-form>
         </v-card-text>
         
-        <v-card-actions class="pa-4">
+        <v-card-actions class="pa-4 pt-0">
           <v-spacer></v-spacer>
-          <v-btn color="error" variant="text" @click="dialog = false">
+          <v-btn 
+            variant="text" 
+            color="grey-darken-1" 
+            @click="dialog = false"
+            class="text-capitalize"
+          >
             Annuler
           </v-btn>
           <v-btn 
             color="primary" 
-            variant="elevated"
-            @click="saveSubcontractor" 
-            :disabled="!valid || !hasValidCoordinates"
+            variant="elevated" 
+            @click="saveSubcontractor"
+            :disabled="!valid || !currentSubcontractor.latitude || !currentSubcontractor.longitude"
+            :loading="isSaving"
+            class="text-capitalize"
+            rounded="xl"
           >
             {{ isEditing ? 'Enregistrer' : 'Ajouter' }}
           </v-btn>
@@ -222,22 +305,89 @@
     
     <!-- Coordinates display dialog -->
     <v-dialog v-model="coordsDialog" max-width="400px">
-      <v-card rounded="lg" elevation="4">
-        <v-card-title class="text-h6 pa-4 bg-info text-white">
-          <v-icon icon="mdi-map-marker" class="mr-2"></v-icon>
-          Coordonnées GPS
-        </v-card-title>
+      <v-card rounded="xl" elevation="8">
+        <v-toolbar color="primary" class="dialog-header" flat>
+          <v-toolbar-title class="text-white">
+            <v-icon icon="mdi-map-marker" class="mr-2"></v-icon>
+            Coordonnées GPS
+          </v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="coordsDialog = false" variant="text" color="white">
+            <v-icon icon="mdi-close"></v-icon>
+          </v-btn>
+        </v-toolbar>
         
         <v-card-text class="pa-4 pt-6">
-          <p><strong>{{ selectedSubcontractor?.name }}</strong></p>
-          <p class="mt-2"><strong>Latitude:</strong> {{ selectedSubcontractor?.latitude }}</p>
-          <p><strong>Longitude:</strong> {{ selectedSubcontractor?.longitude }}</p>
-          <p class="mt-4"><strong>Adresse:</strong> {{ selectedSubcontractor?.address || 'Non spécifiée' }}</p>
+          <div class="d-flex align-center mb-3">
+            <v-avatar color="primary" size="36" class="mr-3">
+              <v-icon icon="mdi-account" color="white"></v-icon>
+            </v-avatar>
+            <h3 class="text-h6">{{ selectedSubcontractor?.name }}</h3>
+          </div>
+
+          <v-divider class="mb-4"></v-divider>
+          
+          <v-list lines="two" density="compact">
+            <v-list-item v-if="selectedSubcontractor?.type">
+              <template v-slot:prepend>
+                <v-icon icon="mdi-tag" color="primary" size="small"></v-icon>
+              </template>
+              <v-list-item-title>Type</v-list-item-title>
+              <v-list-item-subtitle>{{ selectedSubcontractor?.type }}</v-list-item-subtitle>
+            </v-list-item>
+            
+            <v-list-item v-if="selectedSubcontractor?.phone">
+              <template v-slot:prepend>
+                <v-icon icon="mdi-phone" color="primary" size="small"></v-icon>
+              </template>
+              <v-list-item-title>Téléphone</v-list-item-title>
+              <v-list-item-subtitle>{{ selectedSubcontractor?.phone }}</v-list-item-subtitle>
+            </v-list-item>
+            
+            <v-list-item v-if="selectedSubcontractor?.email">
+              <template v-slot:prepend>
+                <v-icon icon="mdi-email" color="primary" size="small"></v-icon>
+              </template>
+              <v-list-item-title>Email</v-list-item-title>
+              <v-list-item-subtitle>{{ selectedSubcontractor?.email }}</v-list-item-subtitle>
+            </v-list-item>
+            
+            <v-list-item v-if="selectedSubcontractor?.address">
+              <template v-slot:prepend>
+                <v-icon icon="mdi-map-marker" color="primary" size="small"></v-icon>
+              </template>
+              <v-list-item-title>Adresse</v-list-item-title>
+              <v-list-item-subtitle>{{ selectedSubcontractor?.address }}</v-list-item-subtitle>
+            </v-list-item>
+            
+            <v-divider class="my-2"></v-divider>
+            
+            <v-list-item>
+              <template v-slot:prepend>
+                <v-icon icon="mdi-latitude" color="primary" size="small"></v-icon>
+              </template>
+              <v-list-item-title>Latitude</v-list-item-title>
+              <v-list-item-subtitle>{{ selectedSubcontractor?.latitude }}</v-list-item-subtitle>
+            </v-list-item>
+            
+            <v-list-item>
+              <template v-slot:prepend>
+                <v-icon icon="mdi-longitude" color="primary" size="small"></v-icon>
+              </template>
+              <v-list-item-title>Longitude</v-list-item-title>
+              <v-list-item-subtitle>{{ selectedSubcontractor?.longitude }}</v-list-item-subtitle>
+            </v-list-item>
+          </v-list>
         </v-card-text>
         
         <v-card-actions class="pa-4">
           <v-spacer></v-spacer>
-          <v-btn color="primary" variant="text" @click="coordsDialog = false">
+          <v-btn 
+            color="primary" 
+            variant="text" 
+            @click="coordsDialog = false"
+            class="text-capitalize"
+          >
             Fermer
           </v-btn>
         </v-card-actions>
@@ -246,23 +396,43 @@
     
     <!-- Confirmation dialog for delete -->
     <v-dialog v-model="confirmDialog" max-width="400px">
-      <v-card rounded="lg" elevation="4">
-        <v-card-title class="text-h6 pa-4 bg-error text-white">
-          <v-icon icon="mdi-alert" class="mr-2"></v-icon>
-          Confirmer la suppression
-        </v-card-title>
+      <v-card rounded="xl" elevation="8">
+        <v-toolbar color="primary" class="dialog-header" flat>
+          <v-toolbar-title class="text-white">
+            <v-icon icon="mdi-alert" class="mr-2"></v-icon>
+            Confirmer la suppression
+          </v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="confirmDialog = false" variant="text" color="white">
+            <v-icon icon="mdi-close"></v-icon>
+          </v-btn>
+        </v-toolbar>
         
         <v-card-text class="pa-4 pt-6">
-          <p>Êtes-vous sûr de vouloir supprimer <strong>{{ selectedSubcontractor?.name }}</strong> ?</p>
-          <p class="mt-2 text-caption">Cette action est irréversible.</p>
+          <v-alert color="error" variant="tonal" density="compact" class="mb-4">
+            <p>Êtes-vous sûr de vouloir supprimer <strong>{{ selectedSubcontractor?.name }}</strong> ?</p>
+            <p class="mt-2 text-caption">Cette action est irréversible.</p>
+          </v-alert>
         </v-card-text>
         
         <v-card-actions class="pa-4">
           <v-spacer></v-spacer>
-          <v-btn color="primary" variant="text" @click="confirmDialog = false">
+          <v-btn 
+            color="grey-darken-1" 
+            variant="text" 
+            @click="confirmDialog = false"
+            class="text-capitalize"
+          >
             Annuler
           </v-btn>
-          <v-btn color="error" variant="elevated" @click="deleteSubcontractor">
+          <v-btn 
+            color="error" 
+            variant="elevated" 
+            @click="deleteSubcontractor"
+            class="text-capitalize"
+            rounded="xl"
+            :loading="isSaving"
+          >
             Supprimer
           </v-btn>
         </v-card-actions>
@@ -297,6 +467,7 @@ const valid = ref(false)
 const form = ref(null)
 const addressError = ref('')
 const isEditing = ref(false)
+const isSaving = ref(false)
 
 // List of subcontractor types
 const subcontractorTypes = ['Réseau', 'Support', 'Télécom', 'Maintenance', 'Autre']
@@ -309,7 +480,8 @@ const currentSubcontractor = reactive({
   id: '',
   name: '',
   type: '',
-  contact: '',
+  phone: '',
+  email: '',
   address: '',
   latitude: 0,
   longitude: 0
@@ -324,6 +496,11 @@ const latitudeRules = [
 const longitudeRules = [
   (v: any) => !!v || 'La longitude est requise',
   (v: any) => (v >= -180 && v <= 180) || 'La longitude doit être comprise entre -180 et 180'
+]
+
+const emailRules = [
+  (v: any) => !!v || 'L\'email est requis',
+  (v: any) => /.+@.+\..+/.test(v) || 'L\'email doit être valide'
 ]
 
 // Check if coordinates are valid
@@ -343,7 +520,8 @@ function openAddDialog() {
     id: '',
     name: '',
     type: '',
-    contact: '',
+    phone: '',
+    email: '',
     address: '',
     latitude: 0,
     longitude: 0
@@ -378,30 +556,40 @@ function handleAddressError(error: string) {
 function saveSubcontractor() {
   if (!valid.value || !hasValidCoordinates.value) return
   
-  if (isEditing.value && currentSubcontractor.id) {
-    // Update existing subcontractor
-    subcontractorStore.editSubcontractor(currentSubcontractor.id, {
-      name: currentSubcontractor.name,
-      type: currentSubcontractor.type || undefined,
-      contact: currentSubcontractor.contact || undefined,
-      address: currentSubcontractor.address,
-      latitude: currentSubcontractor.latitude,
-      longitude: currentSubcontractor.longitude
-    })
-  } else {
-    // Add new subcontractor
-    subcontractorStore.addSubcontractor(
-      currentSubcontractor.name,
-      currentSubcontractor.latitude,
-      currentSubcontractor.longitude,
-      currentSubcontractor.type || undefined,
-      currentSubcontractor.contact || undefined,
-      currentSubcontractor.address
-    )
-  }
+  isSaving.value = true
   
-  // Close dialog
-  dialog.value = false
+  try {
+    if (isEditing.value && currentSubcontractor.id) {
+      // Update existing subcontractor
+      subcontractorStore.editSubcontractor(currentSubcontractor.id, {
+        name: currentSubcontractor.name,
+        type: currentSubcontractor.type || undefined,
+        phone: currentSubcontractor.phone || undefined,
+        email: currentSubcontractor.email || undefined,
+        address: currentSubcontractor.address,
+        latitude: currentSubcontractor.latitude,
+        longitude: currentSubcontractor.longitude
+      })
+    } else {
+      // Add new subcontractor
+      subcontractorStore.addSubcontractor(
+        currentSubcontractor.name,
+        currentSubcontractor.latitude,
+        currentSubcontractor.longitude,
+        currentSubcontractor.type || undefined,
+        currentSubcontractor.phone || undefined,
+        currentSubcontractor.email || undefined,
+        currentSubcontractor.address
+      )
+    }
+    
+    // Close dialog
+    dialog.value = false
+  } catch (error) {
+    console.error('Error saving subcontractor:', error)
+  } finally {
+    isSaving.value = false
+  }
 }
 
 // Show coordinates dialog
@@ -417,7 +605,8 @@ function editSubcontractor(subcontractor: Subcontractor) {
     id: subcontractor.id,
     name: subcontractor.name,
     type: subcontractor.type || '',
-    contact: subcontractor.contact || '',
+    phone: subcontractor.phone || '',
+    email: subcontractor.email || '',
     address: subcontractor.address || '',
     latitude: subcontractor.latitude,
     longitude: subcontractor.longitude
@@ -437,9 +626,17 @@ function confirmDelete(subcontractor: Subcontractor) {
 // Delete a subcontractor
 function deleteSubcontractor() {
   if (selectedSubcontractor.value) {
-    subcontractorStore.deleteSubcontractor(selectedSubcontractor.value.id)
-    confirmDialog.value = false
-    selectedSubcontractor.value = null
+    isSaving.value = true
+    
+    try {
+      subcontractorStore.deleteSubcontractor(selectedSubcontractor.value.id)
+      confirmDialog.value = false
+      selectedSubcontractor.value = null
+    } catch (error) {
+      console.error('Error deleting subcontractor:', error)
+    } finally {
+      isSaving.value = false
+    }
   }
 }
 
@@ -451,56 +648,111 @@ function goBack() {
 
 <style scoped>
 .settings-container {
-  padding: 1rem;
-  background-color: #f5f5f5;
-  min-height: calc(100vh - 64px);
+  min-height: 100%;
+  background-color: #f8f9fa;
+}
+
+.settings-title {
+  background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  margin-top: 8px;
+}
+
+.back-link {
+  transition: transform 0.2s ease;
+}
+
+.back-link:hover {
+  transform: translateX(-3px);
 }
 
 .settings-card {
-  margin-bottom: 1rem;
+  background-color: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   overflow: hidden;
+}
+
+.header-gradient {
+  background: linear-gradient(120deg, var(--primary-color), var(--primary-light));
+  padding: 20px;
+}
+
+.settings-avatar {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .subcontractor-table {
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-.subcontractor-row {
-  transition: background-color 0.2s ease;
+.subcontractor-table thead tr th {
+  background-color: #f5f6f8;
+  color: #162272;
+  font-weight: 600;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.subcontractor-row:hover {
-  background-color: rgba(0, 0, 0, 0.02);
+.subcontractor-table tbody tr {
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.subcontractor-table tbody tr:hover {
+  background-color: rgba(22, 34, 114, 0.04);
+}
+
+.subcontractor-row td {
+  padding: 12px 16px;
+  vertical-align: middle;
+}
+
+.actions-header {
+  width: 150px;
 }
 
 .actions-cell {
+  width: 150px;
+}
+
+.action-buttons {
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .address-cell {
-  max-width: 250px;
+  max-width: 200px;
+}
+
+.address-text {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 180px;
+  display: inline-block;
 }
 
-.add-button {
-  transition: transform 0.2s ease;
+.contact-info {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
 }
 
-.add-button:hover {
-  transform: translateY(-2px);
+.empty-state {
+  background-color: white;
+  border-radius: 8px;
+  margin: 24px;
 }
 
-.back-button {
-  transition: transform 0.2s ease;
-}
-
-.back-button:hover {
-  transform: translateX(-2px);
+.dialog-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 </style> 

@@ -1,49 +1,48 @@
 <template>
   <div class="intervention-list">
-    <v-toolbar density="compact" color="primary" class="intervention-header">
-      <v-toolbar-title class="text-subtitle-1">Interventions à planifier</v-toolbar-title>
-    </v-toolbar>
-    
     <v-list lines="two" class="intervention-items">
-      <v-list-item
-        v-for="intervention in interventions"
+      <v-list-subheader class="d-flex align-center pb-2 pt-0">
+        <span class="text-subtitle-2 font-weight-bold text-uppercase">{{interventions.length}} interventions à planifier</span>
+        <v-spacer></v-spacer>
+        <v-chip size="x-small" variant="flat" color="primary" class="ml-2">Cliquer pour sélectionner</v-chip>
+      </v-list-subheader>
+      
+      <v-card v-for="intervention in interventions"
         :key="intervention.id"
-        :title="intervention.clientName"
-        :subtitle="intervention.address"
-        :active="selectedIntervention?.id === intervention.id"
+        :elevation="selectedIntervention?.id === intervention.id ? 4 : 0"
+        :class="['intervention-card mb-3 mx-2', {'selected': selectedIntervention?.id === intervention.id}]"
         @click="selectIntervention(intervention.id)"
-        class="intervention-item"
+        rounded="lg"
       >
-        <template v-slot:prepend>
-          <v-icon :icon="getStatusIcon(intervention.status)" 
-                 :color="getStatusColor(intervention.status)"
-                 class="status-icon"></v-icon>
-                 
-          <MdIcon 
-            v-if="false"
-            :name="getStatusIcon(intervention.status).replace('mdi-', '')" 
-            :color="getStatusColor(intervention.status)"
-            class="status-icon"
-          ></MdIcon>
-        </template>
-        
-        <template v-slot:append>
-          <v-icon icon="mdi-map-marker" 
-                 color="primary"
-                 class="location-icon"></v-icon>
-                 
-          <MdIcon 
-            v-if="false"
-            name="map-marker" 
-            color="primary"
-            class="location-icon"
-          ></MdIcon>
-        </template>
-      </v-list-item>
+        <div class="d-flex align-center pa-3">
+          <div :class="['status-indicator mr-3', getStatusColor(intervention.status)]">
+            <v-icon :icon="getStatusIcon(intervention.status)" size="small"></v-icon>
+          </div>
+          
+          <div class="intervention-content">
+            <div class="text-subtitle-1 font-weight-medium">{{ intervention.clientName }}</div>
+            <div class="text-body-2 text-grey">
+              <v-icon icon="mdi-map-marker" size="x-small" class="mr-1"></v-icon>
+              {{ intervention.address }}
+            </div>
+          </div>
+          
+          <v-icon 
+            icon="mdi-chevron-right" 
+            :color="selectedIntervention?.id === intervention.id ? 'primary' : 'grey-lighten-1'"
+            class="ml-auto chevron-icon"
+          ></v-icon>
+        </div>
+      </v-card>
     </v-list>
 
     <div v-if="interventions.length === 0" class="no-interventions">
-      <v-alert type="info" class="ma-3">Aucune intervention à planifier</v-alert>
+      <v-alert type="info" variant="tonal" class="ma-3">
+        <template v-slot:prepend>
+          <v-icon icon="mdi-information"></v-icon>
+        </template>
+        <div class="text-center">Aucune intervention à planifier</div>
+      </v-alert>
     </div>
   </div>
 </template>
@@ -97,53 +96,114 @@ function selectIntervention(id: string) {
   flex-direction: column;
   height: 60%;
   overflow-y: auto;
-  background-color: white;
-}
-
-.intervention-header {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: transparent;
 }
 
 .intervention-items {
   flex-grow: 1;
   overflow-y: auto;
+  padding-top: 0;
+  background-color: transparent;
 }
 
-.intervention-item {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  transition: background-color 0.2s ease;
-  padding: 8px 0;
+.intervention-card {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background-color: white;
+}
+
+.intervention-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0);
+}
+
+.intervention-card.selected {
+  border-color: var(--primary-color);
+  background-color: rgba(22, 34, 114, 0.04);
+}
+
+.intervention-card.selected::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background-color: var(--primary-color);
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.status-indicator.warning {
+  background-color: rgba(255, 193, 7, 0.2);
+  color: #f57c00;
+}
+
+.status-indicator.info {
+  background-color: rgba(33, 150, 243, 0.2);
+  color: #1976d2;
+}
+
+.status-indicator.success {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #388e3c;
+}
+
+.status-indicator.grey {
+  background-color: rgba(158, 158, 158, 0.2);
+  color: #616161;
+}
+
+.intervention-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.intervention-content .text-subtitle-1 {
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.intervention-content .text-body-2 {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chevron-icon {
+  transition: transform 0.3s ease;
+}
+
+.selected .chevron-icon {
+  transform: translateX(2px);
+}
+
+.intervention-card:hover .chevron-icon {
+  transform: translateX(2px);
 }
 
 .no-interventions {
   padding: 1rem;
 }
 
-.status-icon, .location-icon {
-  opacity: 0.85;
-  transition: all 0.2s ease;
-  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1));
-}
-
-.location-icon {
-  color: #1976D2 !important;
-  transform-origin: center bottom;
-}
-
-/* Make the list items more interactive */
-:deep(.v-list-item--active) {
-  background-color: rgba(25, 118, 210, 0.12); /* Primary color with low opacity */
-}
-
-:deep(.v-list-item:hover) {
-  background-color: rgba(0, 0, 0, 0.04);
-  cursor: pointer;
-}
-
-:deep(.v-list-item:hover .status-icon),
-:deep(.v-list-item:hover .location-icon) {
-  opacity: 1;
-  transform: translateY(-1px);
-  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+:deep(.v-list-subheader) {
+  height: auto;
+  padding: 12px 16px;
 }
 </style> 
