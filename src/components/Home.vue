@@ -1,6 +1,6 @@
 <template>
   <div class="home-container">
-    <!-- Map section (70%) -->
+    <!-- Map section -->
     <div class="map-container">
       <MapComponent 
         :selected-intervention="selectedIntervention" 
@@ -8,17 +8,19 @@
       />
     </div>
 
-    <!-- Interventions list section (30%) -->
+    <!-- Interventions list section -->
     <div class="interventions-container">
       <InterventionList 
         @select-intervention="onSelectIntervention"
       />
 
       <!-- Nearest subcontractors section (shown when an intervention is selected) -->
-      <NearestSubcontractors 
-        v-if="selectedIntervention && nearestSubcontractors.length"
-        :nearest-subcontractors="nearestSubcontractors"
-      />
+      <transition name="slide-up">
+        <NearestSubcontractors 
+          v-if="selectedIntervention && nearestSubcontractors.length"
+          :nearest-subcontractors="nearestSubcontractors"
+        />
+      </transition>
     </div>
   </div>
 </template>
@@ -61,21 +63,19 @@ const onSelectIntervention = (id: string) => {
 <style scoped>
 .home-container {
   display: flex;
-  height: calc(100vh - 48px); /* Subtract the app bar height */
+  height: 100%; /* Use full height of parent container */
   width: 100%;
   overflow: hidden;
-  position: fixed; /* Changed from absolute to fixed */
-  top: 48px; /* Height of the app bar */
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: relative; /* Change from absolute to relative */
+  /* Remove top, left, right, bottom positioning since we're in v-main which already accounts for the app bar */
 }
 
 .map-container {
   flex: 7;
   height: 100%;
   width: 70%;
-  position: relative; /* Added position relative */
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .interventions-container {
@@ -84,30 +84,42 @@ const onSelectIntervention = (id: string) => {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  border-left: 1px solid #e0e0e0;
   width: 30%;
-  position: relative; /* Added position relative */
+  position: relative;
+  background-color: white;
+  box-shadow: -1px 0 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Slide up animation for the nearest subcontractors panel */
+.slide-up-enter-active, 
+.slide-up-leave-active {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.slide-up-enter-from, 
+.slide-up-leave-to {
+  transform: translateY(20px);
+  opacity: 0;
 }
 
 /* Responsive layout for mobile */
 @media (max-width: 768px) {
   .home-container {
     flex-direction: column;
-    height: calc(100vh - 48px);
+    height: 100%;
   }
   
   .map-container, .interventions-container {
     width: 100%;
-    height: 50%;
   }
   
   .map-container {
-    height: 50vh;
+    height: 50%;
   }
   
   .interventions-container {
-    border-left: none;
-    border-top: 1px solid #e0e0e0;
+    height: 50%;
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
   }
 }
 </style> 
