@@ -1,3 +1,5 @@
+@import url('https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css');
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -83,7 +85,6 @@ button:focus-visible {
 }
 
 /* Material Design Icons fix */
-@import url('https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css');
 
 .mdi {
   font-family: 'Material Design Icons', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
